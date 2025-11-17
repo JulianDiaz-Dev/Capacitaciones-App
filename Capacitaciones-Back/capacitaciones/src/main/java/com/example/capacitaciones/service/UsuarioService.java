@@ -10,4 +10,5 @@ public interface UsuarioService {
     List<UsuarioDTO> findAll();
     void delete(Long idUsuario);
     Usuario findByEmail(String email);
+    List<UsuarioDTO> findAllByCapacitacion(Long idCapacitacion);
 }

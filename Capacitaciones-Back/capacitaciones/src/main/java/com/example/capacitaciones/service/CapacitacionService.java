@@ -14,4 +14,5 @@ public interface CapacitacionService {
     void delete(Long idCapacitacion);
     Optional<Capacitacion> findById(Long idCapacitacion);
 
+    List<Capacitacion> obtenerCapacitacionesPorIds(List<Long> idCapacitaciones);
 }

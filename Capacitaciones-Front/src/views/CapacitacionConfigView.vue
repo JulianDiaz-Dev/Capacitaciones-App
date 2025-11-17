@@ -425,6 +425,7 @@ export default {
               life: 3000,
             })
             this.getSecciones()
+            this.getEntradasPorSeccion(this.selectedSeccion.idSeccion)
           }
         })
         .catch((error) => {

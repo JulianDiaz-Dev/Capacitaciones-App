@@ -85,4 +85,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioOpt.orElse(null);
     }
 
+    @Override
+    public List<UsuarioDTO> findAllByCapacitacion(Long idCapacitacion) {
+        return usuarioRepository.findAllByCapacitacion(idCapacitacion).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
 }

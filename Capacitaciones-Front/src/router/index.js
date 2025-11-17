@@ -4,6 +4,7 @@ import LoginView from '../views/LoginView.vue'
 import MiPanel from '../views/MiPanel.vue'
 import UsuariosView from '../views/UsuariosView.vue'
 import CapacitacionCreateView from '../views/CapacitacionCreateView.vue'
+import AsignacionCapacitacionView from '../views/AsignacionCapacitacionView.vue'
 
 const routes = [
   { path: '/', component: LoginView },
@@ -23,6 +24,11 @@ const routes = [
         name: 'CapacitacionConfigView',
         component: () => import('@/views/CapacitacionConfigView.vue'),
         props: true,
+      },
+      {
+        path: 'AsignacionCapacitacion',
+        name: 'AsignacionCapacitacionView',
+        component: AsignacionCapacitacionView,
       },
     ],
   },

@@ -4,6 +4,7 @@ export const capacitacionService = {
   buscarTodosCapacitaciones: () => api.get('/capacitacion'),
   save: (capacitacion) => api.post('/capacitacion', capacitacion),
   eliminar: (idCapacitacion) => api.delete(`/capacitacion/${idCapacitacion}`),
+  buscarMisCapacitaciones: (idUsuario) => api.get(`/capacitacion/buscarByUsuario/${idUsuario}`),
 }
 
 export default capacitacionService

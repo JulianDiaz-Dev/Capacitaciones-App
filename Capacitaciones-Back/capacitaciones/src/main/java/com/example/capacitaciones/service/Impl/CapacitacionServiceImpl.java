@@ -51,5 +51,14 @@ public class CapacitacionServiceImpl implements CapacitacionService {
         return capacitacionRepository.findById(idCapacitacion);
         
     }
+    public List<Capacitacion> obtenerCapacitacionesPorIds(List<Long> idCapacitaciones) {
+        List<Capacitacion> capacitaciones = capacitacionRepository.findAllById(idCapacitaciones);
+
+        if (capacitaciones.size() != idCapacitaciones.size()) {
+            throw new RuntimeException("Algunas capacitaciones no se encontraron");
+        }
+
+        return capacitaciones;
+    }
 
 }

@@ -39,6 +39,17 @@ public class UsuarioController {
                     .body(Map.of("message", e.getMessage()));
         }
     }
+    @GetMapping("/usuariosPorCapacitacion/{idCapacitacion}")
+    public ResponseEntity<?> buscarTodosUsuariosPorCapacitacion(@PathVariable Long idCapacitacion) {
+        try {
+            List<UsuarioDTO> list = usuarioService.findAllByCapacitacion(idCapacitacion);
+            return ResponseEntity.ok(list);
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> GuardaUsuario(@RequestBody Usuario usuario) {

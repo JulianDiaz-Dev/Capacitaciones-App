@@ -34,6 +34,11 @@ const menuItems = ref([
     command: () => router.push('/CrearCapacitacion'),
   },
   {
+    label: 'Asignacion Capacitacion',
+    icon: 'pi pi-bookmark',
+    command: () => router.push('/AsignacionCapacitacion'),
+  },
+  {
     label: 'Cerrar sesión',
     icon: 'pi pi-sign-out',
     command: () => {
