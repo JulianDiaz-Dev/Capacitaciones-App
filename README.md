@@ -18,9 +18,11 @@ Configurar MinIO publico y crear bucket
 - mc.exe alias set myminio http://localhost:9000 minioadmin minioadmin
 - mc.exe mb myminio/archivos
 - mc.exe anonymous set download myminio/archivos
+
 Acceder a la BD para creación de datos
--docker exec -it postgres_db psql -U miusuario -d mibasedatos
+- docker exec -it postgres_db psql -U miusuario -d mibasedatos
 Ejecutar Scripts
+
 
 insert into rol(nombre) values('ADMIN');
 insert into rol(nombre) values('USER');
