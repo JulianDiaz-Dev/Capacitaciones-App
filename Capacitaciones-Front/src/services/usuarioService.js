@@ -6,6 +6,8 @@ export const usuarioService = {
   obtenerUsuariosAsignados: (idCapacitacion) =>
     api.get(`/usuario/usuariosPorCapacitacion/${idCapacitacion}`),
   eliminar: (id) => api.delete(`/usuario/${id}`),
+
+  buscarUsuario: (idUsuario) => api.get(`/usuario/usuarioPorId/${idUsuario}`),
 }
 
 export default usuarioService

@@ -4,7 +4,13 @@
 
     <PvCard title="Mis Capacitaciones Asignadas">
       <template #content>
-        <PvDataTable :value="capacitaciones" dataKey="idCapacitacion">
+        <PvButton
+          label="Filtros"
+          icon="pi pi-filter"
+          class="p-button-sm"
+          @click="filtrosVisible = true"
+        />
+        <PvDataTable :value="capacitaciones" :filters="filters" dataKey="idCapacitacion">
           <PvColumn field="titulo" header="Título" />
           <PvColumn field="descripcion" header="Descripción" />
 
@@ -23,6 +29,23 @@
             </template>
           </PvColumn>
         </PvDataTable>
+
+        <PvSidebar v-model:visible="filtrosVisible" position="right">
+          <h3>Filtros Secciones</h3>
+          <div style="margin-bottom: 0.75rem">
+            <PvInputText v-model="filters.descripcion.value" placeholder="Descripcion" />
+          </div>
+          <div style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem">
+            <label for="checkTerminado">Terminado</label>
+            <PvCheckbox
+              v-model="progresoTerminado"
+              binary
+              label="Terminado"
+              @change="filtrarProgreso"
+            />
+          </div>
+          <PvButton label="Limpiar filtros" icon="pi pi-filter-slash" @click="limpiarFiltros" />
+        </PvSidebar>
       </template>
     </PvCard>
   </div>
@@ -40,12 +63,19 @@ export default defineComponent({
   data() {
     return {
       capacitaciones: [],
+      filtrosVisible: null,
+      filters: {
+        descripcion: { value: '', matchMode: 'contains' },
+        progreso: { value: 99, matchMode: 'lt' },
+      },
+      progresoTerminado: false,
     }
   },
   setup() {
     const router = useRouter()
     return { router }
   },
+
   mounted() {
     this.cargarCapacitaciones()
   },
@@ -79,6 +109,23 @@ export default defineComponent({
             life: 3000,
           })
         })
+    },
+
+    filtrarProgreso() {
+      if (this.progresoTerminado) {
+        this.filters.progreso.matchMode = 'equals'
+        this.filters.progreso.value = 100
+      } else {
+        this.filters.progreso.matchMode = 'lt'
+        this.filters.progreso.value = 99
+      }
+    },
+
+    limpiarFiltros() {
+      this.filters.descripcion.value = ''
+      this.progresoTerminado = false
+      this.filters.progreso.matchMode = 'lt'
+      this.filters.progreso.value = 99
     },
 
     verDetalle(capacitacion) {

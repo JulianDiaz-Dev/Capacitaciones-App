@@ -5,12 +5,17 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: null,
     claims: null,
+    insignias: null,
   }),
 
   actions: {
     setToken(token) {
       this.token = token
       this.claims = jwt_decode(token)
+    },
+    setInsignias(insignias) {
+      console.log('insignias', insignias)
+      this.insignias = insignias
     },
 
     logout() {

@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: miusuario
+      POSTGRES_PASSWORD: mipassword
+      POSTGRES_DB: mibasedatos
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  # Backend Spring Boot
+  backend:
+    build: ./Capacitaciones-Back/capacitaciones
+    container_name: springboot_backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mibasedatos
+      SPRING_DATASOURCE_USERNAME: miusuario
+      SPRING_DATASOURCE_PASSWORD: mipassword
+      MINIO_URL: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: archivos
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+    depends_on:
+      - db
+      - minio
+      - mailhog
+    networks:
+      - app-network
+
+  # Frontend Vue 3
+  frontend:
+    build: ./Capacitaciones-Front
+    container_name: vue_frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # MailHog
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - app-network
+
+  # MinIO
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Console/WebUI
+    volumes:
+      - minio_data:/data
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+  minio_data:
+
+networks:
+  app-network:

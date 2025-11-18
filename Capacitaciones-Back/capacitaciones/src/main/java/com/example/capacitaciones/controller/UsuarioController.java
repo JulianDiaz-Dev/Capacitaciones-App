@@ -39,6 +39,7 @@ public class UsuarioController {
                     .body(Map.of("message", e.getMessage()));
         }
     }
+
     @GetMapping("/usuariosPorCapacitacion/{idCapacitacion}")
     public ResponseEntity<?> buscarTodosUsuariosPorCapacitacion(@PathVariable Long idCapacitacion) {
         try {
@@ -49,6 +50,15 @@ public class UsuarioController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", e.getMessage()));
         }
+    }
+
+    @GetMapping("/usuarioPorId/{idUsuario}")
+    public ResponseEntity<?> buscarUsuarioPorId(@PathVariable Long idUsuario) {
+        Usuario usuario = usuarioService.findById(idUsuario);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
     }
 
     @PostMapping

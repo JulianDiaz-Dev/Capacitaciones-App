@@ -60,34 +60,43 @@
 <script>
 import { defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 import { capacitacionService } from '../services/capacitacionService'
+import { asignacionService } from '../services/asignacionService'
+import usuarioService from '@/services/usuarioService'
 
 export default defineComponent({
   name: 'DetalleCapacitacion',
   data() {
     return {
       capacitacion: null,
+      idCapacitacion: null,
+      idUsuario: null,
       progreso: 0,
     }
   },
   mounted() {
+    const authStore = useAuthStore()
+    this.idUsuario = authStore.claims?.idUsuario
     this.cargarDetalle()
   },
   methods: {
     initObserver() {
-      const options = { root: null, threshold: 0.3 }
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const idSeccion = entry.target._seccionId
-            if (idSeccion !== undefined) {
-              this.marcarSeccionVista(idSeccion)
+      if (this.progreso < 100) {
+        const options = { root: null, threshold: 0.6 }
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const idSeccion = entry.target._seccionId
+              if (idSeccion !== undefined) {
+                this.marcarSeccionVista(idSeccion)
+              }
             }
-          }
-        })
-      }, options)
-      const elementos = document.querySelectorAll('.seccion')
-      elementos.forEach((el) => observer.observe(el))
+          })
+        }, options)
+        const elementos = document.querySelectorAll('.seccion')
+        elementos.forEach((el) => observer.observe(el))
+      }
     },
 
     marcarSeccionVista(idSeccion) {
@@ -99,20 +108,42 @@ export default defineComponent({
         this.actualizarProgreso()
       }
     },
+    limpiarFiltros() {
+      this.filters.descripcion.value = null
+      this.filters.progreso.value = 0
+    },
 
-    actualizarProgreso() {
-      const totalSecciones = this.capacitacion.secciones.length
-      const vistas = this.capacitacion.seccionesVistas.length
-      this.capacitacion.progreso = Math.round((vistas / totalSecciones) * 100)
-      console.log('Progreso actualizado:', this.capacitacion.progreso)
+    async actualizarProgreso() {
+      try {
+        const totalSecciones = this.capacitacion.secciones.length
+        const vistas = this.capacitacion.seccionesVistas.length
+        this.capacitacion.progreso = Math.round((vistas / totalSecciones) * 100)
+
+        const progresoDTO = {
+          idUsuario: this.idUsuario,
+          idCapacitaciones: [this.idCapacitacion],
+          progreso: this.capacitacion.progreso,
+        }
+        await asignacionService.guardaProgreso(progresoDTO)
+        if (this.capacitacion.progreso === 100) {
+          const authStore = useAuthStore()
+          const res = await usuarioService.buscarUsuario(this.idUsuario)
+          const numeroInsignias = res.data.insignias
+          authStore.setInsignias(numeroInsignias)
+        }
+
+        console.log('Progreso actualizado:', this.capacitacion.progreso)
+      } catch (err) {
+        console.error('Error al actualizar progreso:', err)
+      }
     },
 
     cargarDetalle() {
       const route = useRoute()
-      const idCapacitacion = route.params.idCapacitacion
+      this.idCapacitacion = route.params.idCapacitacion
       this.progreso = route.params.progreso || 0
 
-      if (!idCapacitacion) {
+      if (!this.idCapacitacion) {
         this.$refs.toast.add({
           severity: 'error',
           summary: 'Error',
@@ -123,9 +154,13 @@ export default defineComponent({
       }
 
       capacitacionService
-        .buscarCapacitacion(idCapacitacion)
+        .buscarCapacitacion(this.idCapacitacion)
         .then((res) => {
           this.capacitacion = res.data
+          this.capacitacion.secciones.sort((a, b) => a.orden - b.orden)
+          this.capacitacion.secciones.forEach((seccion) => {
+            seccion.entradas.sort((a, b) => a.orden - b.orden)
+          })
           this.capacitacion.progreso = this.progreso
           this.capacitacion.seccionesVistas = []
 
@@ -180,6 +215,7 @@ export default defineComponent({
 }
 
 .seccion {
+  margin-top: 80px;
   margin-bottom: 2rem;
 }
 

@@ -39,4 +39,5 @@ public class Usuario {
     private String apellido;
     private boolean activo = true;
     private boolean contraseniaTemporal = false;
+    private Integer insignias = 0;
 }

@@ -8,4 +8,5 @@ import com.example.capacitaciones.model.UsuarioCapacitacion;
 public interface UsuarioCapacitacionService {
     List<UsuarioCapacitacion> save(UsuarioCapacitacionDTO usuarioCapacitacionDTO);
     void eliminar (Long idUsuario, Long idCapacitacion);
+    List<UsuarioCapacitacionDTO> guardarProgreso(UsuarioCapacitacionDTO usuarioCapacitacionDTO);
 }

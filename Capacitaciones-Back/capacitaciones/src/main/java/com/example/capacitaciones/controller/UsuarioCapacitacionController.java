@@ -38,4 +38,10 @@ public class UsuarioCapacitacionController {
         usuarioCapacitacionService.eliminar(idUsuario, idCapacitacion);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/guardaProgreso")
+    public ResponseEntity<List<UsuarioCapacitacionDTO>> guardarProgreso(@RequestBody UsuarioCapacitacionDTO usuarioCapacitacionDTO) {
+        List<UsuarioCapacitacionDTO> progreso = usuarioCapacitacionService.guardarProgreso(usuarioCapacitacionDTO);
+        return ResponseEntity.ok(progreso);
+    }
 }

@@ -52,7 +52,6 @@ public class CapacitacionServiceImpl implements CapacitacionService {
     @Override
     public Optional<Capacitacion> findById(Long idCapacitacion) {
         return capacitacionRepository.findById(idCapacitacion);
-        
     }
     @Override
     public List<CapacitacionDTO> buscarTodosCapacitacionesPorUsuario(Long idUsuario) {

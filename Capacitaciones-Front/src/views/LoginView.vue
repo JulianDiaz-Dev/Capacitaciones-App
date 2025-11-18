@@ -135,6 +135,7 @@ export default {
       try {
         const response = await login(email.value, password.value)
         const token = response.data.token
+        console.log(token)
         localStorage.setItem('jwt_token', token)
         auth.setToken(token)
         if (auth.claims) {
@@ -169,6 +170,7 @@ export default {
       usuarioService
         .save(usuario.value)
         .then((res) => {
+          console.log(res)
           displayModal.value = false
           router.push('/MiPanel')
         })

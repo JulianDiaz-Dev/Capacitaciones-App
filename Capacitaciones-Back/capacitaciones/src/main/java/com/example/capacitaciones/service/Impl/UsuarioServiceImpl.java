@@ -70,6 +70,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
+    @Override
+    public Usuario findById(Long idUsuario) {
+        return usuarioRepository.findById(idUsuario).orElse(null);
+    }
+
     private UsuarioDTO toDTO(Usuario usuario) {
         List<String> nombresRoles = usuario.getRoles().stream()
                 .map(Rol::getNombre)
