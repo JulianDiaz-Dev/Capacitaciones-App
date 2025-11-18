@@ -4,6 +4,12 @@ export const entradaService = {
   buscarPorSeccion: (idSeccion) => api.get(`/entrada/entradaPorSeccion/${idSeccion}`),
   save: (entrada) => api.post('/entrada', entrada),
   eliminar: (id) => api.delete(`/entrada/${id}`),
+  uploadFile(formData, onProgress) {
+    return api.post('/entrada/archivo', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: onProgress,
+    })
+  },
 }
 
 export default entradaService

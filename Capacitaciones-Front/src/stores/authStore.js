@@ -19,7 +19,5 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('jwt_token')
     },
   },
-
-  // 👇 Aquí va
   persist: true,
 })

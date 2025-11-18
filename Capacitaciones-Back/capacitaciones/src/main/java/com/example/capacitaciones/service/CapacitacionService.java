@@ -15,4 +15,5 @@ public interface CapacitacionService {
     Optional<Capacitacion> findById(Long idCapacitacion);
 
     List<Capacitacion> obtenerCapacitacionesPorIds(List<Long> idCapacitaciones);
+    List<CapacitacionDTO> buscarTodosCapacitacionesPorUsuario(Long idUsuario);
 }

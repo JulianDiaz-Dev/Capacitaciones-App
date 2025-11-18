@@ -33,6 +33,7 @@ import Sidebar from 'primevue/sidebar'
 import InputNumber from 'primevue/inputnumber'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
+import ProgressBar from 'primevue/progressbar'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -43,6 +44,7 @@ app.use(router)
 app.use(PrimeVue)
 app.use(ToastService)
 
+app.component('PvProgressBar', ProgressBar)
 app.component('PvButton', Button)
 app.component('PvInputText', InputText)
 app.component('PvPassword', Password)

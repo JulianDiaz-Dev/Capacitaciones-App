@@ -14,9 +14,7 @@
           />
         </div>
         <br />
-
         <PvMenubar :model="itemsSecciones" />
-
         <PvDataTable
           :value="secciones"
           :filters="filtersSecciones"
@@ -48,7 +46,6 @@
             @click="limpiarFiltrosSecciones"
           />
         </PvSidebar>
-
         <br /><br />
         <div class="table-header">
           <h3>Entradas</h3>
@@ -60,9 +57,7 @@
           />
         </div>
         <br />
-
         <PvMenubar :model="itemsEntradas" />
-
         <PvDataTable
           :value="entradas"
           :filters="filtersEntradas"
@@ -74,10 +69,9 @@
           dataKey="idEntrada"
         >
           <PvColumn field="idEntrada" header="ID" />
-          <PvColumn field="tipoEntrada.nombre" header="Tipo de Entrada" />
           <PvColumn field="titulo" header="Título" />
           <PvColumn field="contenido" header="Contenido" />
-          <PvColumn field="archivoUrl" header="Archivo URL" />
+          <PvColumn field="archivoUrl" header="Archivo" />
           <PvColumn field="orden" header="Orden" />
         </PvDataTable>
         <PvSidebar v-model:visible="filtrosEntradasVisible" position="right">
@@ -104,17 +98,14 @@
         </PvSidebar>
         <PvDialog header="Crear Sección" v-model:visible="displayModalSecciones" :modal="true">
           <span class="p-float-label">
-            <PvInputText id="nombre" type="text" v-model="seccion.titulo" style="width: 100%" />
+            <PvInputText v-model="seccion.titulo" style="width: 100%" />
             <label>Título</label>
           </span>
-
           <br />
-
           <span class="p-float-label">
-            <PvInputText id="email" type="text" v-model="seccion.orden" style="width: 100%" />
+            <PvInputText v-model="seccion.orden" type="number" style="width: 100%" />
             <label>Orden</label>
           </span>
-
           <template #footer>
             <PvButton label="Guardar" icon="pi pi-check" @click="saveSeccion" />
             <PvButton
@@ -125,38 +116,40 @@
             />
           </template>
         </PvDialog>
-        <PvDialog header="Crear Entrada" v-model:visible="displayModalEntrada" :modal="true">
+        <PvDialog
+          header="Crear / Editar Entrada"
+          v-model:visible="displayModalEntrada"
+          :modal="true"
+        >
           <span class="p-float-label">
-            <PvInputText id="nombre" type="text" v-model="entrada.titulo" style="width: 100%" />
+            <PvInputText v-model="entrada.titulo" style="width: 100%" />
             <label>Título</label>
           </span>
           <br />
           <span class="p-float-label">
-            <PvInputText id="email" type="text" v-model="entrada.contenido" style="width: 100%" />
+            <PvInputText v-model="entrada.contenido" style="width: 100%" />
             <label>Contenido</label>
           </span>
           <br />
-          <span class="p-float-label">
-            <PvInputText id="email" type="text" v-model="entrada.archivoUrl" style="width: 100%" />
-            <label>Archivo/Url</label>
+
+          <span class="p-float-label" v-if="displayModalEntrada">
+            <input
+              type="file"
+              @change="onFileSelected"
+              style="width: 100%"
+              accept="image/*,video/*,.pdf,.doc,.docx"
+            />
           </span>
+          <div v-if="uploadProgress > 0" style="margin-top: 0.5rem">
+            <PvProgressBar :value="uploadProgress" />
+            <p style="margin-top: 0.25rem">Subiendo... {{ uploadProgress }}%</p>
+          </div>
           <br />
           <span class="p-float-label">
-            <PvInputText id="email" type="text" v-model="entrada.orden" style="width: 100%" />
+            <PvInputText v-model.number="entrada.orden" type="number" style="width: 100%" />
             <label>Orden</label>
           </span>
           <br />
-          <span class="p-float-label">
-            <PvDropdown
-              id="tipoEntrada"
-              v-model="entrada.tipoEntrada"
-              :options="tiposEntrada"
-              optionLabel="nombre"
-              style="width: 100%"
-              placeholder="Seleccione"
-            />
-            <label>Tipo Entrada</label>
-          </span>
 
           <template #footer>
             <PvButton label="Guardar" icon="pi pi-check" @click="saveEntrada" />
@@ -176,7 +169,6 @@
 <script>
 import { seccionService } from '../services/seccionService'
 import { entradaService } from '../services/entradaService'
-import { tipoEntradaService } from '../services/tipoEntradaService'
 
 export default {
   name: 'CapacitacionConfigView',
@@ -185,6 +177,7 @@ export default {
     return {
       secciones: [],
       entradas: [],
+      uploadProgress: 0,
       seccion: {
         idSeccion: null,
         titulo: null,
@@ -193,34 +186,30 @@ export default {
       },
       entrada: {
         idEntrada: null,
-        titulo: null,
-        contenido: null,
+        titulo: '',
+        contenido: '',
         orden: null,
         idSeccion: null,
-        tipoEntrada: null,
+        archivo: null,
+        archivoUrl: null,
       },
-      tiposEntrada: [],
-
       selectedSeccion: null,
       selectedEntrada: null,
       idCapacitacion: this.$route.params.idCapacitacion || null,
-
       filtrosSeccionesVisible: false,
       displayModalSecciones: false,
-
+      filtrosEntradasVisible: false,
+      displayModalEntrada: false,
       filtersSecciones: {
         idSeccion: { value: null, matchMode: 'equals' },
         titulo: { value: '', matchMode: 'contains' },
         orden: { value: null, matchMode: 'equals' },
       },
-
-      filtrosEntradasVisible: false,
       filtersEntradas: {
         idEntrada: { value: null, matchMode: 'equals' },
         descripcion: { value: '', matchMode: 'contains' },
         fechaRegistro: { value: null, matchMode: 'equals' },
       },
-
       itemsSecciones: [
         { label: 'Nuevo', icon: 'pi pi-fw pi-plus', command: () => this.verSaveSeccionModal() },
         {
@@ -230,7 +219,6 @@ export default {
         },
         { label: 'Eliminar', icon: 'pi pi-fw pi-trash', command: () => this.deleteSeccion() },
       ],
-      displayModalEntrada: false,
       itemsEntradas: [
         { label: 'Nuevo', icon: 'pi pi-fw pi-plus', command: () => this.verSaveEntradaModal() },
         {
@@ -245,7 +233,6 @@ export default {
 
   mounted() {
     this.getSecciones()
-    this.getTiposEntrada()
   },
 
   watch: {
@@ -254,7 +241,7 @@ export default {
         this.entradas = []
         return
       }
-      this.getEntradasPorSeccion(newSeccion?.idSeccion)
+      this.getEntradasPorSeccion(newSeccion.idSeccion)
     },
   },
 
@@ -262,199 +249,99 @@ export default {
     verSaveSeccionModal() {
       this.seccion = {
         idSeccion: null,
-        titulo: null,
+        titulo: '',
         orden: null,
         idCapacitacion: this.idCapacitacion,
       }
       this.displayModalSecciones = true
     },
+
     verSaveEntradaModal() {
       if (!this.selectedSeccion) {
-        alert('Seleccione un Seccion')
+        alert('Seleccione una Sección')
         return
       }
       this.entrada = {
         idEntrada: null,
-        titulo: null,
-        contenido: null,
+        titulo: '',
+        contenido: '',
         orden: null,
         idSeccion: this.selectedSeccion.idSeccion,
-        tipoEntrada: null,
+        archivo: null,
+        archivoUrl: null,
       }
       this.displayModalEntrada = true
     },
-    verUpdateEntradaModal() {
-      if (!this.selectedEntrada) {
-        alert('Seleccione una Entrada')
-        return
-      }
-      this.entrada = { ...this.selectedEntrada }
-      this.entrada.idSeccion = this.selectedSeccion.idSeccion
 
-      const tipo = this.tiposEntrada.find(
-        (t) => t.idTipoEntrada === this.selectedEntrada.tipoEntrada.idTipoEntrada,
-      )
-      this.entrada.tipoEntrada = tipo || null
-      this.displayModalEntrada = true
-    },
-    verUpdateSeccionModal() {
-      if (!this.selectedSeccion) {
-        alert('Seleccione un Seccion')
-        return
-      }
-      this.seccion = { ...this.selectedSeccion }
-      this.seccion.idCapacitacion = this.idCapacitacion
-      this.displayModalSecciones = true
-    },
-    saveEntrada() {
-      console.log(this.entrada)
-      entradaService
-        .save(this.entrada)
-        .then((response) => {
-          if (response.status === 201 || response.status === 200) {
-            if (this.selectedEntrada) {
-              this.selectedEntrada = this.entrada
-            }
-            this.displayModalEntrada = false
-            this.entrada = {
-              idEntrada: null,
-              titulo: null,
-              contenido: null,
-              orden: null,
-              idSeccion: this.selectedSeccion.idSeccion,
-              tipoEntrada: null,
-            }
+    onFileSelected(event) {
+      console.log('Archivo seleccionado:')
+      const file = event.target.files[0]
 
-            this.getEntradasPorSeccion(this.selectedSeccion.idSeccion)
+      if (file) this.entrada.archivo = file
+    },
+
+    async saveEntrada() {
+      try {
+        if (this.entrada.archivo) {
+          const formData = new FormData()
+          formData.append('file', this.entrada.archivo)
+
+          const response = await entradaService.uploadFile(formData, {
+            onUploadProgress: (progressEvent) => {
+              this.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            },
+          })
+          if (response && (response.status === 200 || response.status === 201)) {
+            this.entrada.archivoUrl = response.data.url
+          } else {
+            console.error('Error al subir archivo', response)
+            alert('No se pudo subir el archivo')
+            return
           }
-        })
-        .catch((error) => {
-          alert('No se pudo guardar la sección')
-          console.log(error)
-        })
+        }
+
+        const res = await entradaService.save(this.entrada)
+        if (res && (res.status === 200 || res.status === 201)) {
+          this.displayModalEntrada = false
+          this.getEntradasPorSeccion(this.selectedSeccion.idSeccion)
+        } else {
+          console.error('Error al guardar entrada', res)
+          alert('No se pudo guardar la entrada')
+        }
+        this.uploadProgress = 0
+      } catch (error) {
+        console.error(error)
+        alert('Ocurrió un error al guardar la entrada')
+      }
     },
 
     saveSeccion() {
       seccionService
         .save(this.seccion)
-        .then((response) => {
-          if (response.status === 201 || response.status === 200) {
-            if (this.selectedSeccion) {
-              this.selectedSeccion = this.seccion
-            }
-            this.displayModalSecciones = false
-            this.seccion = {
-              idSeccion: null,
-              titulo: null,
-              orden: null,
-              idCapacitacion: this.idCapacitacion,
-            }
-
-            this.getSecciones()
-          }
+        .then(() => {
+          this.displayModalSecciones = false
+          this.getSecciones()
         })
-        .catch((error) => {
-          alert('No se pudo guardar la sección', error)
-        })
+        .catch((err) => console.error(err))
     },
 
     getSecciones() {
       seccionService
         .buscarSeccionesPorCapacitacion(this.idCapacitacion)
         .then((res) => (this.secciones = res.data))
-        .catch((err) => console.error('Error al cargar secciones:', err))
+        .catch((err) => console.error(err))
     },
-    getEntradasPorSeccion(idSeccion) {
-      if (!idSeccion) {
-        this.entradas = []
-        return
-      }
 
+    getEntradasPorSeccion(idSeccion) {
       entradaService
         .buscarPorSeccion(idSeccion)
         .then((res) => (this.entradas = res.data))
-        .catch((err) => console.error('Error al cargar entradas:', err))
-    },
-    deleteEntrada() {
-      if (!this.selectedEntrada) {
-        alert('Seleccione una Entrada')
-        return
-      }
-
-      if (!confirm(`¿Eliminar la entrada "${this.selectedEntrada.titulo}"?`)) return
-
-      const id = this.selectedEntrada.idEntrada
-
-      entradaService
-        .eliminar(id)
-        .then((response) => {
-          if (response.status === 200 || response.status === 204) {
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Eliminación Completada',
-              detail: 'Se eliminó el registro correctamente.',
-              life: 3000,
-            })
-            this.getEntradasPorSeccion(this.selectedSeccion.idSeccion)
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-          alert('No se pudo eliminar la entrada')
-        })
-    },
-
-    deleteSeccion() {
-      if (!this.selectedSeccion) {
-        alert('Seleccione una sección')
-        return
-      }
-
-      if (!confirm(`¿Eliminar la sección "${this.selectedSeccion.titulo}"?`)) return
-
-      const id = this.selectedSeccion.idSeccion
-
-      seccionService
-        .eliminar(id)
-        .then((response) => {
-          if (response.status === 200 || response.status === 204) {
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Eliminación Completada',
-              detail: 'Se eliminó el registro correctamente.',
-              life: 3000,
-            })
-            this.getSecciones()
-            this.getEntradasPorSeccion(this.selectedSeccion.idSeccion)
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-          alert('No se pudo eliminar la sección')
-        })
-    },
-    getTiposEntrada() {
-      tipoEntradaService
-        .buscarAll()
-        .then((res) => (this.tiposEntrada = res.data))
-        .catch((err) => console.error('Error cargando tipos de entrada:', err))
-    },
-
-    limpiarFiltrosSecciones() {
-      this.filtersSecciones.idSeccion.value = null
-      this.filtersSecciones.titulo.value = ''
-      this.filtersSecciones.orden.value = null
-    },
-
-    limpiarFiltrosEntradas() {
-      this.filtersEntradas.idEntrada.value = null
-      this.filtersEntradas.descripcion.value = ''
-      this.filtersEntradas.fechaRegistro.value = null
+        .catch((err) => console.error(err))
     },
 
     closeModal() {
-      this.displayModalSecciones = false
       this.displayModalEntrada = false
+      this.displayModalSecciones = false
     },
   },
 }

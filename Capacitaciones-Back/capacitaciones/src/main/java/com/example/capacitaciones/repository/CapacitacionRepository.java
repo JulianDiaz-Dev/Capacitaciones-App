@@ -13,7 +13,7 @@ import com.example.capacitaciones.model.Capacitacion;
 public interface CapacitacionRepository extends JpaRepository<Capacitacion, Long> {
     @Query("""
             SELECT new com.example.capacitaciones.DTOs.CapacitacionDTO(
-                c.idCapacitacion, c.titulo, c.descripcion, c.fechaCreacion
+                c.idCapacitacion, c.titulo, c.descripcion, c.fechaCreacion, null
             )FROM Capacitacion c
             """)
     List<CapacitacionDTO> findAllDTO();

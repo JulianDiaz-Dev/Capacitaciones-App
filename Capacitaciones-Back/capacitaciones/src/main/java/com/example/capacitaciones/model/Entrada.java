@@ -27,10 +27,6 @@ public class Entrada {
     @JsonBackReference
     private Seccion seccion;
 
-    @ManyToOne
-    @JoinColumn(name = "idTipoEntrada", nullable = false)
-    private TipoEntrada tipoEntrada;
-
     @Column(nullable = false)
     private String titulo;
 
@@ -38,6 +34,7 @@ public class Entrada {
     @Column(columnDefinition = "TEXT")
     private String contenido;
 
+    @Column(columnDefinition = "TEXT")
     private String archivoUrl;
 
     private Integer orden = 0;

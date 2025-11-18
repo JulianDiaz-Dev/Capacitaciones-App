@@ -17,4 +17,5 @@ public class CapacitacionDTO {
     private String descripcion;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime fechaCreacion;
+    private Integer progreso;
 }

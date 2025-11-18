@@ -1,5 +1,6 @@
 package com.example.capacitaciones.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,6 @@ public interface UsuarioCapacitacionRepository extends JpaRepository<UsuarioCapa
     boolean existsByUsuarioAndCapacitacion(Usuario usuario, Capacitacion capacitacion);
 
     Optional<UsuarioCapacitacion> findByUsuario_IdUsuarioAndCapacitacion_IdCapacitacion(Long idUsuario, Long idCapacitacion);
+    List<UsuarioCapacitacion> findByUsuarioIdUsuario(Long idUsuario);
 
 }

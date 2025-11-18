@@ -38,6 +38,19 @@ public class CapacitacionController {
                     .body(Map.of("message", e.getMessage()));
         }
     }
+    
+    @GetMapping("/buscarById/{idCapacitacion}")
+    public ResponseEntity<Capacitacion> buscarCapacitacionPorId(@PathVariable Long idCapacitacion) {
+        Capacitacion capacitacion = capacitacionService.findById(idCapacitacion)
+            .orElseThrow(() -> new RuntimeException("Capacitación no encontrada"));
+            return ResponseEntity.ok(capacitacion);
+    }
+
+    @GetMapping("/buscarByUsuario/{idUsuario}")
+    public ResponseEntity<List<CapacitacionDTO>> buscarTodosCapacitacionesPorUsuario(@PathVariable Long idUsuario) {
+        List<CapacitacionDTO> capacitaciones = capacitacionService.buscarTodosCapacitacionesPorUsuario(idUsuario) ;
+        return ResponseEntity.ok(capacitaciones);
+    }
 
     @PostMapping
     public ResponseEntity<Capacitacion> GuardaCapacitacion(@RequestBody Capacitacion capacitacion) {

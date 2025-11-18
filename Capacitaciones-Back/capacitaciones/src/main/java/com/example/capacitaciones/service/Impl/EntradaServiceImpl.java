@@ -28,7 +28,6 @@ public class EntradaServiceImpl implements EntradaService{
         Entrada entrada = new Entrada();
         entrada.setId(entradaDTO.getIdEntrada());
         entrada.setSeccion(seccion);
-        entrada.setTipoEntrada(entradaDTO.getTipoEntrada());
         entrada.setTitulo(entradaDTO.getTitulo());
         entrada.setContenido(entradaDTO.getContenido());
         entrada.setArchivoUrl(entradaDTO.getArchivoUrl());

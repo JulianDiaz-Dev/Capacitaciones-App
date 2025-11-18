@@ -3,12 +3,14 @@ package com.example.capacitaciones.service.Impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.capacitaciones.DTOs.CapacitacionDTO;
 import com.example.capacitaciones.model.Capacitacion;
 import com.example.capacitaciones.repository.CapacitacionRepository;
+import com.example.capacitaciones.repository.UsuarioCapacitacionRepository;
 import com.example.capacitaciones.service.CapacitacionService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class CapacitacionServiceImpl implements CapacitacionService {
 
     private final CapacitacionRepository capacitacionRepository;
+    private final UsuarioCapacitacionRepository usuarioCapacitacionRepository;
 
     @Override
     public Capacitacion save(Capacitacion capacitacion) {
@@ -51,6 +54,22 @@ public class CapacitacionServiceImpl implements CapacitacionService {
         return capacitacionRepository.findById(idCapacitacion);
         
     }
+    @Override
+    public List<CapacitacionDTO> buscarTodosCapacitacionesPorUsuario(Long idUsuario) {
+        return usuarioCapacitacionRepository
+            .findByUsuarioIdUsuario(idUsuario)
+            .stream()
+            .map(uc -> new CapacitacionDTO(
+                    uc.getCapacitacion().getIdCapacitacion(),
+                    uc.getCapacitacion().getTitulo(),
+                    uc.getCapacitacion().getDescripcion(),
+                    uc.getCapacitacion().getFechaCreacion(),
+                    uc.getProgreso()
+            ))
+            .collect(Collectors.toList());
+        
+    }
+    
     public List<Capacitacion> obtenerCapacitacionesPorIds(List<Long> idCapacitaciones) {
         List<Capacitacion> capacitaciones = capacitacionRepository.findAllById(idCapacitaciones);
 

@@ -30,6 +30,12 @@ const routes = [
         name: 'AsignacionCapacitacionView',
         component: AsignacionCapacitacionView,
       },
+      {
+        path: 'DetalleCapacitacion/:idCapacitacion/:progreso',
+        name: 'DetalleCapacitacionView',
+        component: () => import('@/views/DetalleCapacitacionView.vue'),
+        props: true,
+      },
     ],
   },
 ]

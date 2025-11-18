@@ -15,10 +15,9 @@ public interface EntradaRepository extends JpaRepository<Entrada, Long> {
 
     @Query("""
            SELECT new com.example.capacitaciones.DTOs.EntradaDTO(
-               e.id, tp, e.titulo, e.contenido, e.archivoUrl, e.orden, null
+               e.id, e.titulo, e.contenido, e.archivoUrl, e.orden, null
            )
            FROM Entrada e
-           LEFT JOIN TipoEntrada tp ON e.tipoEntrada.idTipoEntrada = tp.idTipoEntrada
            WHERE e.seccion.idSeccion = :idSeccion
            """)
     List<EntradaDTO> findAllDTOByIdSeccion(@Param("idSeccion") Long idSeccion);

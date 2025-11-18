@@ -7,7 +7,11 @@
         <PvDataTable :value="capacitaciones" dataKey="idCapacitacion">
           <PvColumn field="titulo" header="Título" />
           <PvColumn field="descripcion" header="Descripción" />
-          <PvColumn field="progreso" header="Progreso (%)" />
+
+          <PvColumn header="Progreso (%)" style="width: 11rem">
+            <template #body="slotProps"> {{ slotProps.data.progreso }}% </template>
+          </PvColumn>
+
           <PvColumn header="Acciones" style="width: 10rem">
             <template #body="slotProps">
               <PvButton
@@ -21,39 +25,27 @@
         </PvDataTable>
       </template>
     </PvCard>
-
-    <PvDialog
-      header="Detalle de Capacitación"
-      v-model:visible="displayDetalleModal"
-      :modal="true"
-      :style="{ width: '50%' }"
-    >
-      <div v-if="detalleCapacitacion">
-        <p><strong>Título:</strong> {{ detalleCapacitacion.titulo }}</p>
-        <p><strong>Descripción:</strong> {{ detalleCapacitacion.descripcion }}</p>
-        <p><strong>Progreso:</strong> {{ detalleCapacitacion.progreso }}%</p>
-      </div>
-    </PvDialog>
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
 import { useAuthStore } from '../stores/authStore'
-// import { asignacionService } from '../services/asignacionService'
+import { useRouter } from 'vue-router'
 import { capacitacionService } from '../services/capacitacionService'
 
 export default defineComponent({
-  name: 'MisCapacitacionesView',
+  name: 'MiPanel',
 
   data() {
     return {
       capacitaciones: [],
-      displayDetalleModal: false,
-      detalleCapacitacion: null,
     }
   },
-
+  setup() {
+    const router = useRouter()
+    return { router }
+  },
   mounted() {
     this.cargarCapacitaciones()
   },
@@ -90,8 +82,10 @@ export default defineComponent({
     },
 
     verDetalle(capacitacion) {
-      this.detalleCapacitacion = capacitacion
-      this.displayDetalleModal = true
+      this.router.push({
+        name: 'DetalleCapacitacionView',
+        params: { idCapacitacion: capacitacion.idCapacitacion, progreso: capacitacion.progreso },
+      })
     },
   },
 })
