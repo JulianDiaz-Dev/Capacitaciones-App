@@ -9,20 +9,22 @@ Requisitos
 - Docker y Docker Compose
 Ejecución de la aplicación
 Cloran el repositorio en el directorio deseado
-- cd <Directorio Deseado>
+- cd DirectorioDeseado
 - git clone https://github.com/JulianDiaz-Dev/Capacitaciones-App
 - cd Capacitaciones-App
 Ejecutar Docker Compose para orquestar todos los contenedores
 - docker-compose up -d --build
+Descargar MinIo
+- Ir a: https://min.io/download
+- Descargar el MinIO Client para Windows (mc.exe)
+- Guardar mc.exe en un directorio, por ejemplo: C:\MinIO\
 Configurar MinIO publico y crear bucket
-- mc.exe alias set myminio http://localhost:9000 minioadmin minioadmin
-- mc.exe mb myminio/archivos
-- mc.exe anonymous set download myminio/archivos
-
+- C:\MinIO\mc.exe alias set myminio http://localhost:9000 minioadmin minioadmin
+- C:\MinIO\mc.exe mb myminio/archivos
+- C:\MinIO\mc.exe anonymous set download myminio/archivos
 Acceder a la BD para creación de datos
 - docker exec -it postgres_db psql -U miusuario -d mibasedatos
 Ejecutar Scripts
-
 
 insert into rol(nombre) values('ADMIN');
 insert into rol(nombre) values('USER');
@@ -106,3 +108,19 @@ values
 (1,1,'Qué es un contenedor','Los contenedores son entornos ligeros que permiten ejecutar aplicaciones de manera aislada y reproducible. Contienen todo lo necesario: código, dependencias y configuraciones.', 'https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png'),
 (2,2,'Dockerfile','Un Dockerfile es un archivo de texto con instrucciones para construir una imagen Docker. Incluye FROM, RUN, COPY, WORKDIR, EXPOSE y CMD para definir cómo se debe construir la imagen.', 'https://cdn-icons-png.flaticon.com/512/919/919825.png'),
 (3,3,'Docker Compose','Docker Compose permite definir y ejecutar aplicaciones multi-contenedor mediante un archivo docker-compose.yml. Se pueden definir servicios, redes y volúmenes.', 'https://cdn-icons-png.flaticon.com/512/906/906292.png');
+
+insert into usuario_capacitacion (id_usuario, id_capacitacion, progreso)
+values
+(1, 1, 0),
+(1, 2, 0),
+(1, 3, 0),
+(1, 4, 0);
+
+insert into usuario_capacitacion (id_usuario, id_capacitacion, progreso)
+values
+(2, 2, 0),
+(2, 3, 0),
+(3, 1, 0),
+(4, 4, 0),
+(5, 1, 0),
+(5, 3, 0);
