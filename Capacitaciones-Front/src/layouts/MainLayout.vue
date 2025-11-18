@@ -47,10 +47,10 @@ const esAdmin = roles.includes('ADMIN')
 const menuItems = ref(
   esAdmin
     ? [
-        { label: 'Inicio', icon: 'pi pi-home', command: () => router.push('/MiPanel') },
+        { label: 'Mis Capacitaciones', icon: 'pi pi-home', command: () => router.push('/MiPanel') },
         { label: 'Usuarios', icon: 'pi pi-users', command: () => router.push('/Usuarios') },
         {
-          label: 'Capacitaciones',
+          label: 'Configurar Capacitaciones',
           icon: 'pi pi-chart-bar',
           command: () => router.push('/CrearCapacitacion'),
         },
