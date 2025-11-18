@@ -12,7 +12,7 @@ Cloran el repositorio en el directorio deseado
 - cd DirectorioDeseado
 - git clone https://github.com/JulianDiaz-Dev/Capacitaciones-App
 - cd Capacitaciones-App
-Ejecutar Docker Compose para orquestar todos los contenedores
+Ejecutar Docker Compose para montar todos los contenedores
 - docker-compose up -d --build
 Descargar MinIo
 - Ir a: https://min.io/download
